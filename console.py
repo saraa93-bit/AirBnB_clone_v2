@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] == '{' and pline[-1] =='}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -115,38 +115,6 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        ignored_attrs = ('id', 'created_at', 'updated_at', '__class__')
-        class_name = ''
-        name_pattern = r'(?P<name>(?:[a-zA-Z]|_)(?:[a-zA-Z]|\d|_)*)'
-        class_match = re.match(name_pattern, args)
-        obj_kwargs = {}
-        if class_match is not None:
-            class_name = class_match.group('name')
-            params_str = args[len(class_name):].strip()
-            params = params_str.split(' ')
-            str_pattern = r'(?P<t_str>"([^"]|\")*")'
-            float_pattern = r'(?P<t_float>[-+]?\d+\.\d+)'
-            int_pattern = r'(?P<t_int>[-+]?\d+)'
-            param_pattern = '{}=({}|{}|{})'.format(
-                name_pattern,
-                str_pattern,
-                float_pattern,
-                int_pattern
-            )
-            for param in params:
-                param_match = re.fullmatch(param_pattern, param)
-                if param_match is not None:
-                    key_name = param_match.group('name')
-                    str_v = param_match.group('t_str')
-                    float_v = param_match.group('t_float')
-                    int_v = param_match.group('t_int')
-                    if float_v is not None:
-                        obj_kwargs[key_name] = float(float_v)
-                    if int_v is not None:
-                        obj_kwargs[key_name] = int(int_v)
-                    if str_v is not None:
-                        obj_kwargs[key_name] = str_v[1:-1].replace('_', ' ')
-        else:
         if not args:
             print("** class name missing **")
             return
@@ -304,7 +272,7 @@ class HBNBCommand(cmd.Cmd):
                 args.append(v)
         else:  # isolate args
             args = args[2]
-            if args and args[0] is '\"':  # check for quoted arg
+            if args and args[0] == '\"':  # check for quoted arg
                 second_quote = args.find('\"', 1)
                 att_name = args[1:second_quote]
                 args = args[second_quote + 1:]
@@ -312,10 +280,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] is not ' ':
+            if not att_name and args[0] != ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] is '\"':
+            if args[2] and args[2][0] == '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
@@ -349,9 +317,8 @@ class HBNBCommand(cmd.Cmd):
 
     def help_update(self):
         """ Help information for the update class """
-   
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
-if __name__=="__main__":
+if __name__ == "__main__":
     HBNBCommand().cmdloop()
